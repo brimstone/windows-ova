@@ -1,0 +1,5 @@
+*.vmdk
+d/*.gz
+debian
+*.swp
+*.img
