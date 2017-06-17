@@ -4,16 +4,17 @@ mount -t proc none /proc
 mount -t devtmpfs none /dev
 mount -t sysfs none /sys
 
-busybox --install
+busybox --install >/dev/null
 
-depmod -a
+depmod -a >/dev/null
 
 find /sys -name modalias -exec cat \{\} \; \
 | xargs /sbin/modprobe -a >/dev/null 2>/dev/null
 
-modprobe -vv sd-mod
-modprobe -vv loop
-modprobe -vv fuse
+modprobe -vv sd-mod >/dev/null
+modprobe -vv sr-mod >/dev/null
+modprobe -vv loop >/dev/null
+modprobe -vv fuse >/dev/null
 
 # fix drive timeouts
 for f in /sys/block/sd?/device/timeout; do
