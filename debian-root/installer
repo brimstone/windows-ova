@@ -5,10 +5,25 @@ set -euo pipefail
 [ -d /c ] || mkdir /c
 [ -d /d ] || mkdir /d
 [ -d /wim ] || mkdir /wim
+[ -d /iso ] || mkdir /iso
 
-cmd="$(echo dialog --no-tags --radiolist '"Pick a version"' 20 60 $(wc -l < /etc/versions) $(awk -F, '{print $1,"\"" $2 "\"","off"}' /etc/versions) | sed 's/off/on/')"
 version=""
-version="$(eval "$cmd" 3>&2 2>&1 1>&3)"
+if mount /dev/sr0 /iso; then
+	if [ -e /iso/version.txt ]; then
+		version="$(< /iso/version.txt)"
+	fi
+	if [ -e /iso/Autounattend.xml ]; then
+		au="/iso/Autounattend.xml"
+	else
+		au="/au/${version}.xml"
+	fi
+fi
+
+cmd="$(echo dialog --no-tags --radiolist '"Pick a version"' 20 60 13 $(awk -F, '{print $1,"\"" $2 "\"","off"}' /etc/versions) | sed 's/off/on/')"
+if [ -z "$version" ]; then
+	version="$(eval "$cmd" 3>&2 2>&1 1>&3)"
+	au="/au/${version}.xml"
+fi
 
 if [ -z "$version" ]; then
 	poweroff -f
@@ -28,23 +43,22 @@ mkfs.ntfs -f -L data /dev/sdb1
 mount /dev/sdb1 /d
 
 cd /c
-#wget "$URL" -O /c/windows.iso
-aria2c -x 8 -s 8 --file-allocation=prealloc  "$URL" -o /windows.iso
+aria2c -x 8 -s 8 --file-allocation=prealloc  "$URL" -o "/${version}.iso"
 sync
 
-echo "$SHA1SUM /c/windows.iso" | sha1sum -c >/dev/null
+echo "Checking iso"
+echo "$SHA1SUM /c/${version}.iso" | sha1sum -c >/dev/null
 if [ $? != 0 ]; then
 	echo "Checksum failed"
 	read -r _
 fi
 
 cd /d
-7z x /c/windows.iso
+7z x "/c/${version}.iso"
 wimmountrw /d/sources/boot.wim 2 /wim
-cp "/au/${version}.xml" /wim/Autounattend.xml
+cp "$au" /wim/Autounattend.xml
 wimunmount --commit /wim
 cd /
-
 
 sync
 sync
