@@ -49,6 +49,7 @@ clean:
 	-rm c.vmdk
 	-rm d.vmdk
 	-rm c/initramfs.gz
+	-rm example.iso
 
 .PHONY: vbox
 vbox:
@@ -64,3 +65,6 @@ vbox:
 	--ovf10 --manifest --vsys 0 \
 	--vendorurl https://github.com/brimstone/windows-ova \
 	--vendor brimstone
+
+example.iso:
+	genisoimage -o $@ -J -R -V example iso/
