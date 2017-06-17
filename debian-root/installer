@@ -1,0 +1,56 @@
+#!/bin/bash
+
+set -euo pipefail
+
+[ -d /c ] || mkdir /c
+[ -d /d ] || mkdir /d
+[ -d /wim ] || mkdir /wim
+
+cmd="$(echo dialog --no-tags --radiolist '"Pick a version"' 20 60 $(wc -l < /etc/versions) $(awk -F, '{print $1,"\"" $2 "\"","off"}' /etc/versions) | sed 's/off/on/')"
+version=""
+version="$(eval "$cmd" 3>&2 2>&1 1>&3)"
+
+if [ -z "$version" ]; then
+	poweroff -f
+fi
+
+URL="$(awk -F, "\$1 == \"$version\" {print \$4}" /etc/versions)"
+SHA1SUM="$(awk -F, "\$1 == \"$version\" {print \$3}" /etc/versions)"
+
+localmirror="$(dialog --inputbox "Enter URL of local mirror. This can be left blank." 8 60 3>&2 2>&1 1>&3)"
+
+if [ -n "$localmirror" ]; then
+	URL="$localmirror/$(basename "$URL")"
+fi
+
+mount /dev/sda1 /c
+mkfs.ntfs -f -L data /dev/sdb1
+mount /dev/sdb1 /d
+
+cd /c
+#wget "$URL" -O /c/windows.iso
+aria2c -x 8 -s 8 --file-allocation=prealloc  "$URL" -o /windows.iso
+sync
+
+echo "$SHA1SUM /c/windows.iso" | sha1sum -c >/dev/null
+if [ $? != 0 ]; then
+	echo "Checksum failed"
+	read -r _
+fi
+
+cd /d
+7z x /c/windows.iso
+wimmountrw /d/sources/boot.wim 2 /wim
+cp "/au/${version}.xml" /wim/Autounattend.xml
+wimunmount --commit /wim
+cd /
+
+
+sync
+sync
+sync
+
+until umount /d; do sync; sleep 1; done
+until umount /c; do sync; sleep 1; done
+
+exit 0

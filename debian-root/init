@@ -15,40 +15,19 @@ modprobe -vv sd-mod
 modprobe -vv loop
 modprobe -vv fuse
 
-ifconfig lo up
+# fix drive timeouts
+for f in /sys/block/sd?/device/timeout; do
+	echo 86400 > "$f"
+done
 
+# setup networking
+ifconfig lo up
 for i in $(ip a s | awk '/^[^ ]/ {print $2}' | sed -e s/://); do
 	[ "$i" = "lo" ] && continue
 	dhclient -v "$i"
 done
 
-mkdir /c /d /iso /wim
+# run the installer
+/installer || exec /bin/bash
 
-mount /dev/sda1 /c
-mount /dev/sdb1 /d
-
-# TODO prompt for this
-cd /d
-
-cmd="$(echo whiptail --radiolist text 20 60 $(wc -l < /etc/versions) $(awk -F, '{print $1,"\"" $2 "\"","off"}' /etc/versions))"
-version="$(eval "$cmd" 3>&2 2>&1 1>&3)"
-
-URL="$(awk -F, "\$1 == \"$version\" {print \$4}" /etc/versions)"
-SHA1SUM="$(awk -F, "\$1 == \"$version\" {print \$3}" /etc/versions)"
-
-wget "$URL" -O /c/windows.iso
-sync
-
-echo "$SHA1SUM /c/windows.iso" | sha1sum -c >/dev/null
-if [ $? != 0 ]; then
-	echo "Checksum failed"
-	read -r _
-fi
-
-7z x /c/windows.iso
-wimmountrw /d/sources/boot.wim 2 /wim
-cp "/d/au/${version}.xml" /wim/Autounattend.xml
-wimunmount --commit /wim
-cd /
-
-/bin/bash
+reboot -f
