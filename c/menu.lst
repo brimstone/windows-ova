@@ -5,5 +5,5 @@ color cyan/blue white/blue
 title Installer
 find --set-root /BOOTMGR && chainloader /BOOTMGR && boot
 find --set-root /kernel.gz
-kernel /kernel.gz
+kernel /kernel.gz quiet
 initrd /initramfs.gz
