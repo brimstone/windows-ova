@@ -50,6 +50,7 @@ clean:
 	-rm d.vmdk
 	-rm c/initramfs.gz
 	-rm example.iso
+	-sudo rm -rf debian
 
 .PHONY: vbox
 vbox:
