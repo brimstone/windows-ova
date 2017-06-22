@@ -30,8 +30,11 @@ This is simply run at first login after install. Place things in here like
 silent installation instructions for programs either off the same iso or
 downloaded from the internet.
 
-### version.txt
-This file should contain one of the following keys:
+### variables.txt
+This file should set at least one variable.
+
+#### `version`
+This should be one of the following keys:
 
 |key      |Version                 |
 |---------|------------------------|
@@ -47,7 +50,20 @@ This file should contain one of the following keys:
 |win7-64  |Windows 7 64-bit        |
 |win7-32  |Windows 7 32-bit        |
 
+#### `localmirror`
+This should be the absolute address of a local mirror for ISOs. It can also be `"none"` for no mirror and no prompt. This allows truly unattended installation.
+
+
+#### Example `variables.txt`
+```
+version=win10-64
+localmirror=http://192.168.0.1/isos/
+```
+
 ### Autounattend.xml
 If this file is present on the ISO, it will be used instead of an
 `Autounattend.xml` from the [boxcutter](https://github.com/boxcutter/windows)
-project. Take care that this file matches the version in `version.xml`
+project. Take care that this file matches the version in `version.xml` One
+gotcha is how Windows 7 and Windows 2008 think the install media is DriveID 0
+and the actual "C" drive is DriveID 1. Keep that in mind when crafting answer
+files for this versions.

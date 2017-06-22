@@ -12,20 +12,23 @@ dialog(){
 }
 
 version=""
+localmirror=""
+
 if mount /dev/sr0 /iso; then
-	if [ -e /iso/version.txt ]; then
-		version="$(< /iso/version.txt)"
-	fi
-	if [ -e /iso/Autounattend.xml ]; then
-		au="/iso/Autounattend.xml"
-	else
-		au="/au/${version}.xml"
+	if [ -e /iso/variables.txt ]; then
+		. /iso/variables.txt
 	fi
 fi
 
-cmd="$(echo dialog --no-tags --radiolist '"Pick a version"' 20 60 13 $(awk -F, '{print $1,"\"" $2 "\"","off"}' /etc/versions) | sed 's/off/on/')"
+cmd="$(echo dialog --title '"Windows Version Selection"' --no-tags --radiolist '"Select a Windows version to install"' 20 60 13 $(awk -F, '{print $1,"\"" $2 "\"","off"}' /etc/versions) | sed 's/off/on/')"
 if [ -z "$version" ]; then
 	version="$(eval "$cmd" 3>&2 2>&1 1>&3)"
+fi
+
+# Allow just overriding of the Autounattend.xml file, based on version
+if [ -e "/iso/${version}/Autounattend.xml" ]; then
+	au="/iso/${version}/Autounattend.xml"
+else
 	au="/au/${version}.xml"
 fi
 
@@ -36,7 +39,11 @@ fi
 URL="$(awk -F, "\$1 == \"$version\" {print \$4}" /etc/versions)"
 SHA1SUM="$(awk -F, "\$1 == \"$version\" {print \$3}" /etc/versions)"
 
-localmirror="$(dialog --inputbox "Enter URL of local mirror. This can be left blank." 8 60 3>&2 2>&1 1>&3)"
+if [ "$localmirror" != "none" ]; then
+	localmirror="$(dialog --title "Mirror selection" --inputbox "Enter URL of local mirror. This can be left blank." 8 60 3>&2 2>&1 1>&3)"
+else
+	localmirror=""
+fi
 
 if [ -n "$localmirror" ]; then
 	URL="$localmirror/$(basename "$URL")"
