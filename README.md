@@ -61,9 +61,9 @@ localmirror=http://192.168.0.1/isos/
 ```
 
 ### Autounattend.xml
-If this file is present on the ISO, it will be used instead of an
-`Autounattend.xml` from the [boxcutter](https://github.com/boxcutter/windows)
-project. Take care that this file matches the version in `version.xml` One
-gotcha is how Windows 7 and Windows 2008 think the install media is DriveID 0
-and the actual "C" drive is DriveID 1. Keep that in mind when crafting answer
-files for this versions.
+If this file is present on the ISO, in a directory named for the version key
+being installed, it will be used instead of an `Autounattend.xml` from the
+[boxcutter](https://github.com/boxcutter/windows) project. One gotcha is how
+Windows 7 and Windows 2008 think the install media is DriveID 0 and the actual
+"C" drive is DriveID 1. Keep that in mind when crafting answer files for these
+versions.
