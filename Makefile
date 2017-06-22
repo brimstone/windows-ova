@@ -10,6 +10,7 @@ c/initramfs.gz: debian.cfg debian-root/init
 	sudo rm -rf debian
 	sudo multistrap -f debian.cfg
 	sudo mv debian/boot/vmlinu* c/kernel.gz
+	git describe --always --tags --dirty | sudo tee debian/etc/version
 	sudo rsync --progress -a --no-owner --no-group debian-root/ debian/
 	( \
 		cd debian; \
