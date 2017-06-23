@@ -13,7 +13,7 @@ After this is done, the smaller secondary drive can be discarded to save disk
 space. If the default size of the primary drive is not large enough, it should
 be resized BEFORE booting the OVA for the first time.
 
-
+![windows 10](win10.gif)
 
 Customizing
 -----------
