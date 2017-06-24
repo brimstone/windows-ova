@@ -17,6 +17,9 @@ localmirror=""
 if mount /dev/sr0 /iso; then
 	if [ -e /iso/variables.txt ]; then
 		. /iso/variables.txt
+		# strip linefeed incase the file is in dos format
+		version="${version%%$'\r'}"
+		localmirror="${localmirror%%$'\r'}"
 	fi
 fi
 
