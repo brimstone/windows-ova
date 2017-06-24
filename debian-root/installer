@@ -42,13 +42,18 @@ fi
 URL="$(awk -F, "\$1 == \"$version\" {print \$4}" /etc/versions)"
 SHA1SUM="$(awk -F, "\$1 == \"$version\" {print \$3}" /etc/versions)"
 
-if [ "$localmirror" != "none" ]; then
+# If local mirror isn't set, ask the user about it
+if [ -z "$localmirror" ]; then
 	localmirror="$(dialog --title "Mirror selection" --inputbox "Enter URL of local mirror. This can be left blank." 8 60 3>&2 2>&1 1>&3)"
-else
+fi
+# if localmirror is set to none, then unset it
+if [ "$localmirror" = "none" ]; then
 	localmirror=""
 fi
 
+# if local mirror is set, pull from there instead
 if [ -n "$localmirror" ]; then
+	echo "Local mirror is $localmirror"
 	URL="$localmirror/$(basename "$URL")"
 fi
 
