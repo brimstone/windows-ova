@@ -27,12 +27,13 @@ c.vmdk: c/initramfs.gz
 	dd if=/dev/zero of=c.img bs=100M count=1000 conv=sparse status=progress
 	echo ',,c,*;' | /sbin/sfdisk c.img
 	loop=$$(sudo losetup -f) \
+	loopp1=$$(sudo losetup -f|sed 's#dev/#dev/mapper/#')p1 \
 	&& sudo losetup $$loop c.img \
 	&& sudo kpartx -a "$$loop" \
 	&& sleep 1 \
-	&& sudo mkfs.ext4 /dev/mapper/loop0p1 \
+	&& sudo mkfs.ext4 $$loopp1 \
 	&& sudo ./bootlace.com "$$loop" \
-	&& sudo mount /dev/mapper/loop0p1 disk \
+	&& sudo mount $$loopp1 disk \
 	&& sudo rsync -Pa --no-owner --no-group c/ disk/ \
 	&& sudo umount disk \
 	&& sudo kpartx -d $$loop  \
