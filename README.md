@@ -67,3 +67,14 @@ being installed, it will be used instead of an `Autounattend.xml` from the
 Windows 7 and Windows 2008 think the install media is DriveID 0 and the actual
 "C" drive is DriveID 1. Keep that in mind when crafting answer files for these
 versions.
+
+Building
+--------
+To build this, start with a debian system and install virtualbox and the
+following:
+```
+apt-get install pv multistrap debian-archive-keyring rsync kpartx genisoimage
+```
+
+Specifically for the `make vbox` target, a previous OVA needs to be imported or
+at least a VM needs to exist in virtualbox with the name "Windows".
