@@ -27,7 +27,7 @@ c.vmdk: c/initramfs.gz
 	dd if=/dev/zero of=c.img bs=100M count=1000 conv=sparse status=progress
 	echo ',,c,*;' | /sbin/sfdisk c.img
 	loop=$$(/sbin/losetup -f) \
-    && mapper=$$(/sbin/losetup -f|sed 's#dev/#dev/mapper/#')p1 \
+	&& mapper=$$(/sbin/losetup -f|sed 's#dev/#dev/mapper/#')p1 \
 	&& sudo losetup $$loop c.img \
 	&& sudo kpartx -a "$$loop" \
 	&& sleep 1 \
