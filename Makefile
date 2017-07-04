@@ -65,8 +65,8 @@ Windows.ova: c.vmdk d.vmdk Windows.ovf
 	tar -cf Windows.ova -C ova \
 		Windows.ovf \
 		Windows-c.vmdk \
-		Windows-d.vmdk \
-		Windows.mf
+		Windows-d.vmdk
+		#Windows.mf
 
 example.iso:
 	genisoimage -o $@ -J -R -V example iso/
