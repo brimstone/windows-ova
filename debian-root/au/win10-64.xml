@@ -107,7 +107,7 @@
                     <RequiresUserInput>true</RequiresUserInput>
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
-                    <CommandLine>cmd.exe /c E:\install.cmd</CommandLine>
+                    <CommandLine>cmd.exe /c D:\install.cmd</CommandLine>
                     <Description>Run install scripts on drive E</Description>
                     <Order>2</Order>
                     <RequiresUserInput>true</RequiresUserInput>

@@ -1,0 +1,189 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ovf:Envelope xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vbox="http://www.virtualbox.org/ovf/machine" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" ovf:version="1.0" xml:lang="en-US">
+  <ovf:References>
+    <ovf:File ovf:href="Windows-c.vmdk" ovf:id="file1" ovf:size="@@C_FILE_SIZE@@" />
+    <ovf:File ovf:href="Windows-d.vmdk" ovf:id="file2" ovf:size="@@D_FILE_SIZE@@" />
+  </ovf:References>
+  <ovf:DiskSection>
+    <ovf:Info>List of the virtual disks used in the package</ovf:Info>
+    <ovf:Disk ovf:capacity="@@C_CAPACITY@@" ovf:diskId="vmdisk1" ovf:fileRef="file1" ovf:format="http://www.vmware.com/interfaces/specifications/vmdk.html#streamOptimized" vbox:uuid="1bcd998b-a8ab-4b31-a6bb-ea958070ceb3" />
+    <ovf:Disk ovf:capacity="@@D_CAPACITY@@" ovf:diskId="vmdisk2" ovf:fileRef="file2" ovf:format="http://www.vmware.com/interfaces/specifications/vmdk.html#streamOptimized" vbox:uuid="3910cbf3-f47d-4cdc-887e-dcf4587e36a3" />
+  </ovf:DiskSection>
+  <ovf:NetworkSection>
+    <ovf:Info>Logical networks used in the package</ovf:Info>
+    <ovf:Network ovf:name="NAT">
+      <ovf:Description>Logical network used by this appliance.</ovf:Description>
+    </ovf:Network>
+  </ovf:NetworkSection>
+  <ovf:VirtualSystem ovf:id="Windows">
+    <ovf:Info>A virtual machine</ovf:Info>
+    <ovf:ProductSection>
+      <ovf:Info>Meta-information about the installed software</ovf:Info>
+      <ovf:Product>Windows</ovf:Product>
+      <ovf:ProductUrl>https://github.com/brimstone/windows-ova</ovf:ProductUrl>
+    </ovf:ProductSection>
+    <ovf:AnnotationSection>
+      <ovf:Info>A human-readable annotation</ovf:Info>
+      <ovf:Annotation>Self-Installing Windows VM</ovf:Annotation>
+    </ovf:AnnotationSection>
+    <ovf:OperatingSystemSection ovf:id="102">
+      <ovf:Info>The kind of installed guest operating system</ovf:Info>
+      <ovf:Description>Other_64</ovf:Description>
+      <vbox:OSType ovf:required="false">WindowsNT_64</vbox:OSType>
+    </ovf:OperatingSystemSection>
+    <ovf:VirtualHardwareSection>
+      <ovf:Info>Virtual hardware requirements for a virtual machine</ovf:Info>
+      <ovf:System>
+        <vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
+        <vssd:InstanceID>0</vssd:InstanceID>
+        <vssd:VirtualSystemIdentifier>Windows</vssd:VirtualSystemIdentifier>
+        <vssd:VirtualSystemType>virtualbox-2.2</vssd:VirtualSystemType>
+      </ovf:System>
+      <ovf:Item>
+        <rasd:Caption>1 virtual CPU</rasd:Caption>
+        <rasd:Description>Number of virtual CPUs</rasd:Description>
+        <rasd:ElementName>1 virtual CPU</rasd:ElementName>
+        <rasd:InstanceID>1</rasd:InstanceID>
+        <rasd:ResourceType>3</rasd:ResourceType>
+        <rasd:VirtualQuantity>1</rasd:VirtualQuantity>
+      </ovf:Item>
+      <ovf:Item>
+        <rasd:AllocationUnits>MegaBytes</rasd:AllocationUnits>
+        <rasd:Caption>1024 MB of memory</rasd:Caption>
+        <rasd:Description>Memory Size</rasd:Description>
+        <rasd:ElementName>1024 MB of memory</rasd:ElementName>
+        <rasd:InstanceID>2</rasd:InstanceID>
+        <rasd:ResourceType>4</rasd:ResourceType>
+        <rasd:VirtualQuantity>1024</rasd:VirtualQuantity>
+      </ovf:Item>
+      <ovf:Item>
+        <rasd:Address>0</rasd:Address>
+        <rasd:Caption>ideController0</rasd:Caption>
+        <rasd:Description>IDE Controller</rasd:Description>
+        <rasd:ElementName>ideController0</rasd:ElementName>
+        <rasd:InstanceID>3</rasd:InstanceID>
+        <rasd:ResourceSubType>PIIX4</rasd:ResourceSubType>
+        <rasd:ResourceType>5</rasd:ResourceType>
+      </ovf:Item>
+      <ovf:Item>
+        <rasd:Address>0</rasd:Address>
+        <rasd:Caption>sataController0</rasd:Caption>
+        <rasd:Description>SATA Controller</rasd:Description>
+        <rasd:ElementName>sataController0</rasd:ElementName>
+        <rasd:InstanceID>4</rasd:InstanceID>
+        <rasd:ResourceSubType>AHCI</rasd:ResourceSubType>
+        <rasd:ResourceType>20</rasd:ResourceType>
+      </ovf:Item>
+      <ovf:Item>
+        <rasd:Address>0</rasd:Address>
+        <rasd:Caption>usb</rasd:Caption>
+        <rasd:Description>USB Controller</rasd:Description>
+        <rasd:ElementName>usb</rasd:ElementName>
+        <rasd:InstanceID>5</rasd:InstanceID>
+        <rasd:ResourceType>23</rasd:ResourceType>
+      </ovf:Item>
+      <ovf:Item>
+        <rasd:AddressOnParent>0</rasd:AddressOnParent>
+        <rasd:Caption>disk1</rasd:Caption>
+        <rasd:Description>Disk Image</rasd:Description>
+        <rasd:ElementName>disk1</rasd:ElementName>
+        <rasd:HostResource>ovf:/disk/vmdisk1</rasd:HostResource>
+        <rasd:InstanceID>6</rasd:InstanceID>
+        <rasd:Parent>4</rasd:Parent>
+        <rasd:ResourceType>17</rasd:ResourceType>
+      </ovf:Item>
+      <ovf:Item>
+        <rasd:AddressOnParent>1</rasd:AddressOnParent>
+        <rasd:Caption>disk2</rasd:Caption>
+        <rasd:Description>Disk Image</rasd:Description>
+        <rasd:ElementName>disk2</rasd:ElementName>
+        <rasd:HostResource>ovf:/disk/vmdisk2</rasd:HostResource>
+        <rasd:InstanceID>7</rasd:InstanceID>
+        <rasd:Parent>4</rasd:Parent>
+        <rasd:ResourceType>17</rasd:ResourceType>
+      </ovf:Item>
+      <ovf:Item>
+        <rasd:AddressOnParent>0</rasd:AddressOnParent>
+        <rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+        <rasd:Caption>cdrom0</rasd:Caption>
+        <rasd:Description>CD-ROM Drive</rasd:Description>
+        <rasd:ElementName>cdrom0</rasd:ElementName>
+        <rasd:HostResource>ovf:/file/file3</rasd:HostResource>
+        <!--rasd:HostResource>ovf:/disk/vmdisk3</rasd:HostResource-->
+        <rasd:InstanceID>8</rasd:InstanceID>
+        <rasd:Parent>3</rasd:Parent>
+        <rasd:ResourceType>15</rasd:ResourceType>
+      </ovf:Item>
+      <ovf:Item>
+        <rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+        <rasd:Caption>Ethernet adapter on 'NAT'</rasd:Caption>
+        <rasd:Connection>NAT</rasd:Connection>
+        <rasd:ElementName>Ethernet adapter on 'NAT'</rasd:ElementName>
+        <rasd:InstanceID>9</rasd:InstanceID>
+        <!--rasd:ResourceSubType>PCNet32</rasd:ResourceSubType-->
+        <rasd:ResourceSubType>VmxNet3</rasd:ResourceSubType>
+        <rasd:ResourceType>10</rasd:ResourceType>
+      </ovf:Item>
+    </ovf:VirtualHardwareSection>
+    <vbox:Machine OSType="WindowsNT_64" lastStateChange="2017-06-29T17:32:01Z" name="Windows" snapshotFolder="Snapshots" uuid="{c2a7bb29-16ff-4e06-af72-ce1358394a12}" version="1.15-linux" ovf:required="false">
+      <ovf:Info>Complete VirtualBox machine configuration in VirtualBox format</ovf:Info>
+      <ovf:ExtraData>
+        <ovf:ExtraDataItem name="GUI/LastCloseAction" value="PowerOff" />
+        <ovf:ExtraDataItem name="GUI/LastNormalWindowPosition" value="415,30,951,738" />
+        <ovf:ExtraDataItem name="GUI/RestrictedRuntimeDevicesMenuActions" value="HardDrives" />
+        <ovf:ExtraDataItem name="GUI/RestrictedRuntimeMachineMenuActions" value="SaveState,PowerOff" />
+        <ovf:ExtraDataItem name="GUI/StatusBar/IndicatorOrder" value="HardDisks,OpticalDisks,FloppyDisks,Network,USB,SharedFolders,Display,VideoCapture,Features,Mouse,Keyboard" />
+      </ovf:ExtraData>
+      <ovf:Hardware>
+        <ovf:CPU>
+          <ovf:PAE enabled="false" />
+          <ovf:LongMode enabled="true" />
+          <ovf:HardwareVirtExLargePages enabled="false" />
+        </ovf:CPU>
+        <ovf:Memory RAMSize="1024" />
+        <ovf:HID Pointing="USBTablet" />
+        <ovf:Paravirt provider="Default" />
+        <ovf:Display VRAMSize="128" />
+        <ovf:RemoteDisplay enabled="false" />
+        <ovf:BIOS>
+          <ovf:IOAPIC enabled="true" />
+        </ovf:BIOS>
+        <ovf:USB>
+          <ovf:Controllers>
+            <ovf:Controller name="OHCI" type="OHCI" />
+          </ovf:Controllers>
+        </ovf:USB>
+        <ovf:Network>
+          <ovf:Adapter MACAddress="080027EA3292" cable="true" enabled="true" slot="0">
+            <ovf:NAT />
+          </ovf:Adapter>
+          <ovf:Adapter cable="true" slot="1" type="82540EM" />
+          <ovf:Adapter cable="true" slot="2" type="82540EM" />
+          <ovf:Adapter cable="true" slot="3" type="82540EM" />
+          <ovf:Adapter cable="true" slot="4" type="82540EM" />
+          <ovf:Adapter cable="true" slot="5" type="82540EM" />
+          <ovf:Adapter cable="true" slot="6" type="82540EM" />
+          <ovf:Adapter cable="true" slot="7" type="82540EM" />
+        </ovf:Network>
+        <ovf:LPT>
+          <ovf:Port IOBase="0x378" IRQ="7" enabled="false" slot="1" />
+        </ovf:LPT>
+        <ovf:AudioAdapter controller="HDA" driver="Pulse" enabled="false" />
+        <ovf:GuestProperties>
+          <ovf:GuestProperty flags="" name="/VirtualBox/HostInfo/GUI/LanguageID" timestamp="1498934262001229000" value="en_US" />
+        </ovf:GuestProperties>
+      </ovf:Hardware>
+      <ovf:StorageControllers>
+        <ovf:StorageController Bootable="true" IDE0MasterEmulationPort="0" IDE0SlaveEmulationPort="1" IDE1MasterEmulationPort="2" IDE1SlaveEmulationPort="3" PortCount="4" name="SATA" type="AHCI" useHostIOCache="false">
+          <ovf:AttachedDevice device="0" hotpluggable="false" port="0" type="HardDisk">
+            <ovf:Image uuid="{1bcd998b-a8ab-4b31-a6bb-ea958070ceb3}" />
+          </ovf:AttachedDevice>
+          <ovf:AttachedDevice device="0" hotpluggable="false" port="1" type="HardDisk">
+            <ovf:Image uuid="{3910cbf3-f47d-4cdc-887e-dcf4587e36a3}" />
+          </ovf:AttachedDevice>
+        </ovf:StorageController>
+        <ovf:StorageController name="IDE" type="PIIX4" PortCount="2" useHostIOCache="true" Bootable="true" />
+      </ovf:StorageControllers>
+    </vbox:Machine>
+  </ovf:VirtualSystem>
+</ovf:Envelope>

@@ -1,44 +1,39 @@
-all: c.vmdk d.vmdk
+# 100G
+C_CAPACITY = 107374182400
+# 10G
+D_CAPACITY = 10737418240
+
+all: Windows.ova example.iso
 
 d.vmdk:
-	dd if=/dev/zero of=d.img bs=512M count=10 conv=sparse
+	dd if=/dev/zero of=d.img bs=$$(( ${D_CAPACITY} / 10 )) count=10 conv=sparse
 	echo ',,7,*;' | /sbin/sfdisk d.img
-	qemu-img convert d.img -O vmdk d.vmdk
+	#qemu-img resize -f raw d.img "${D_CAPACITY}"
+	qemu-img convert -f raw d.img -O vmdk -o subformat=streamOptimized d.vmdk
 	rm d.img
+	#qemu-img create -f vmdk -o subformat=streamOptimized d.vmdk "${D_CAPACITY}"
 
-c/initramfs.gz: debian.cfg debian-root/init
-	sudo rm -rf debian
-	sudo multistrap -f debian.cfg
-	sudo mv debian/boot/vmlinu* c/kernel.gz
-	git describe --always --tags --dirty | sudo tee debian/etc/version
-	sudo rsync --progress -a --no-owner --no-group debian-root/ debian/
-	( \
-		cd debian; \
-		sudo find . -print0 \
-		| pv -0 -s $$(sudo find . | wc -l) \
-		| sudo cpio --null -o --format=newc \
+c/initramfs.gz: debian.cfg debian-root/init debian-root/installer
+	rm -rf debian
+	fakeroot /usr/sbin/multistrap -f debian.cfg
+	mv debian/boot/vmlinu* c/kernel.gz
+	git describe --always --tags --dirty > debian/etc/version
+	rsync --progress -a --no-owner --no-group debian-root/ debian/
+	cp bootlace.com debian/usr/bin/
+	echo "== Compressing initramfs"
+	cd debian; \
+		find . -print0 \
+		| cpio --null --owner=0:0 -o --format=newc \
 		| gzip -9 \
-		> ../c/initramfs.gz \
-	)
-
-	#&& sudo mkfs.vfat -F 32 /dev/mapper/loop0p1 \
+		> ../c/initramfs.gz
 
 c.vmdk: c/initramfs.gz
-	dd if=/dev/zero of=c.img bs=100M count=1000 conv=sparse status=progress
-	echo ',,c,*;' | /sbin/sfdisk c.img
-	loop=$$(/sbin/losetup -f) \
-	&& mapper=$$(/sbin/losetup -f|sed 's#dev/#dev/mapper/#')p1 \
-	&& sudo losetup $$loop c.img \
-	&& sudo kpartx -a "$$loop" \
-	&& sleep 1 \
-	&& sudo mkfs.ext4 $$mapper \
-	&& sudo ./bootlace.com "$$loop" \
-	&& sudo mount $$mapper disk \
-	&& sudo rsync -Pa --no-owner --no-group c/ disk/ \
-	&& sudo umount disk \
-	&& sudo kpartx -d $$loop  \
-	&& sudo losetup -d $$loop
-	qemu-img convert c.img -O vmdk c.vmdk
+	-rm c.img
+	/sbin/mkfs.vfat -C c.img -F 32 "$$(du -s c | awk '{print $$1 + 10000}')"
+	MTOOLS_SKIP_CHECK=1 mcopy -si c.img c/* ::
+	./bootlace.com --floppy c.img
+	qemu-img resize c.img ${C_CAPACITY}
+	qemu-img convert c.img -O vmdk -o subformat=streamOptimized c.vmdk
 	rm c.img
 
 
@@ -52,22 +47,30 @@ clean:
 	-rm d.vmdk
 	-rm c/initramfs.gz
 	-rm example.iso
-	-sudo rm -rf debian
+	-rm -rf debian
+	-rm Windows.ova
 
-.PHONY: vbox
-vbox:
-	winuid=$$(VBoxManage list vms | awk '$$1 == "\"Windows\"" {print $$2}' | sed 's/[{}]//g') \
-	&& VBoxManage storageattach "$$winuid" --storagectl SATA --port 0 --device 0 --medium none \
-	; VBoxManage storageattach "$$winuid" --storagectl SATA --port 1 --device 0 --medium none \
-	; VBoxManage list hdds | awk '/^UUID:/ {u=$$2} /windows-ova/ {print u}' \
-	| xargs -I{} VBoxManage closemedium disk {} \
-	&& VBoxManage storageattach $$winuid --storagectl SATA --port 0 --device 0 --type hdd --medium c.vmdk \
-	; VBoxManage storageattach $$winuid --storagectl SATA --port 1 --device 0 --type hdd --medium d.vmdk \
-	; rm Windows.ova \
-	; VBoxManage export $$winuid -o Windows.ova \
-	--ovf10 --manifest --vsys 0 \
-	--vendorurl https://github.com/brimstone/windows-ova \
-	--vendor brimstone
+Windows.ova: c.vmdk d.vmdk Windows.ovf
+	cp c.vmdk ova/Windows-c.vmdk
+	cp d.vmdk ova/Windows-d.vmdk
+	cp Windows.ovf ova/
+	sed -e "s/@@C_FILE_SIZE@@/$$(stat -c %s c.vmdk)/" \
+		-e "s/@@D_FILE_SIZE@@/$$(stat -c %s d.vmdk)/" \
+		-e "s/@@C_CAPACITY@@/${C_CAPACITY}/" \
+		-e "s/@@D_CAPACITY@@/${D_CAPACITY}/" \
+		-i ova/Windows.ovf
+	cd ova; for f in Windows.ovf Windows-c.vmdk Windows-d.vmdk; do \
+		echo "SHA1 ($$f)= $$(sha1sum < $$f | awk '{print $$1}')"; \
+	done > Windows.mf
+	tar -cf Windows.ova -C ova \
+		Windows.ovf \
+		Windows-c.vmdk \
+		Windows-d.vmdk \
+		Windows.mf
 
 example.iso:
 	genisoimage -o $@ -J -R -V example iso/
+
+.PHONY: import
+import: Windows.ova
+	VBoxManage import Windows.ova
