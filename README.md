@@ -20,7 +20,9 @@ Customizing
 
 This OVA supports being repackaged with an ISO for further customization.
 Simply add at least one file, `install.cmd` to an iso and attach it before
-booting the OVA for the first time.
+booting the OVA for the first time. The system will boot up, and copy the
+contents of the iso to the secondary drive, display a message to the user upon
+success, then shutdown. The VM can be exported as a OVA now for redistribution.
 
 Contents for an example iso are in the `iso/` directory. There is also a
 `Makefile` target for building this iso, `example.iso`.
@@ -51,7 +53,8 @@ This should be one of the following keys:
 |win7-32  |Windows 7 32-bit        |
 
 #### `localmirror`
-This should be the absolute address of a local mirror for ISOs. It can also be `"none"` for no mirror and no prompt. This allows truly unattended installation.
+This should be the absolute address of a local mirror for ISOs. It can also be
+`"none"` for no mirror and no prompt. This allows truly unattended installation.
 
 
 #### Example `variables.txt`
@@ -73,8 +76,6 @@ Building
 To build this, start with a debian system and install virtualbox and the
 following:
 ```
-apt-get install pv multistrap debian-archive-keyring rsync kpartx genisoimage
+apt-get install fakeroot multistrap debian-archive-keyring rsync mtools
+genisoimage
 ```
-
-Specifically for the `make vbox` target, a previous OVA needs to be imported or
-at least a VM needs to exist in virtualbox with the name "Windows".
