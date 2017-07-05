@@ -2,8 +2,10 @@
 C_CAPACITY = 107374182400
 # 10G
 D_CAPACITY = 10737418240
+# Git version
+VERSION = $(shell git describe --always --tags --dirty)
 
-all: Windows.ova example.iso
+all: Windows-${VERSION}.ova example.iso
 
 d.vmdk:
 	dd if=/dev/zero of=d.img bs=$$(( ${D_CAPACITY} / 10 )) count=10 conv=sparse
@@ -17,7 +19,7 @@ c/initramfs.gz: debian.cfg debian-root/init debian-root/installer
 	rm -rf debian
 	fakeroot /usr/sbin/multistrap -f debian.cfg
 	mv debian/boot/vmlinu* c/kernel.gz
-	git describe --always --tags --dirty > debian/etc/version
+	echo "${VERSION}" > debian/etc/version
 	rsync --progress -a --no-owner --no-group debian-root/ debian/
 	cp bootlace.com debian/usr/bin/
 	echo "== Compressing initramfs"
@@ -48,22 +50,25 @@ clean:
 	-rm c/initramfs.gz
 	-rm example.iso
 	-rm -rf debian
-	-rm Windows.ova
+	-rm Windows*.ova
 
-Windows.ova: c.vmdk d.vmdk Windows.ovf
+.PHONY: ova
+ova: Windows-${VERSION}.ova
+Windows-${VERSION}.ova: c.vmdk d.vmdk Windows.ovf
 	cp c.vmdk ova/Windows-c.vmdk
 	cp d.vmdk ova/Windows-d.vmdk
-	cp Windows.ovf ova/
+	cp Windows.ovf ova/Windows-${VERSION}.ovf
 	sed -e "s/@@C_FILE_SIZE@@/$$(stat -c %s c.vmdk)/" \
 		-e "s/@@D_FILE_SIZE@@/$$(stat -c %s d.vmdk)/" \
 		-e "s/@@C_CAPACITY@@/${C_CAPACITY}/" \
 		-e "s/@@D_CAPACITY@@/${D_CAPACITY}/" \
-		-i ova/Windows.ovf
-	cd ova; for f in Windows.ovf Windows-c.vmdk Windows-d.vmdk; do \
+		-e "s/@@VERSION@@/${VERSION}/" \
+		-i ova/Windows-${VERSION}.ovf
+	cd ova; for f in Windows-${VERSION}.ovf Windows-c.vmdk Windows-d.vmdk; do \
 		echo "SHA1 ($$f)= $$(sha1sum < $$f | awk '{print $$1}')"; \
 	done > Windows.mf
-	tar -cf Windows.ova -C ova \
-		Windows.ovf \
+	tar -cf Windows-${VERSION}.ova -C ova \
+		Windows-${VERSION}.ovf \
 		Windows-c.vmdk \
 		Windows-d.vmdk
 		#Windows.mf

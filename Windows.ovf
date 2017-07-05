@@ -21,6 +21,7 @@
       <Info>Meta-information about the installed software</Info>
       <Product>Windows</Product>
       <ProductUrl>https://github.com/brimstone/windows-ova</ProductUrl>
+      <Version>@@VERSION@@</Version>
     </ProductSection>
     <AnnotationSection>
       <Info>A human-readable annotation</Info>
