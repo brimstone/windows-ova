@@ -77,5 +77,5 @@ To build this, start with a debian system and install virtualbox and the
 following:
 ```
 apt-get install fakeroot multistrap debian-archive-keyring rsync mtools
-genisoimage
+genisoimage qemu-img
 ```
