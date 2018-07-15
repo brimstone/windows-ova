@@ -28,6 +28,8 @@ for i in $(ip a s | awk '/^[^ ]/ {print $2}' | sed -e s/://); do
 	dhclient -v "$i"
 done
 
+# Make the display never blank
+printf '\33[9;0]\33[14;0]'
 # run the installer
 /installer || exec /bin/bash
 
