@@ -77,5 +77,5 @@ example.iso:
 	genisoimage -o $@ -J -R -V example iso/
 
 .PHONY: import
-import: Windows.ova
-	VBoxManage import Windows.ova
+import: ova
+	VBoxManage import Windows-${VERSION}.ova
