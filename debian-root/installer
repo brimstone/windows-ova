@@ -92,7 +92,7 @@ fi
 
 
 cd /c
-aria2c -x 8 -s 8 --check-certificate=false --file-allocation=prealloc  "$URL" -o "/${version}.iso"
+aria2c -U 'Wget/1.19.5 (linux-gnu)' -x 8 -s 8 --check-certificate=false --file-allocation=prealloc  "$URL" -o "/${version}.iso"
 sync
 
 echo "Checking iso"
