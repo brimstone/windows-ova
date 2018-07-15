@@ -78,6 +78,8 @@ fi
 
 if ! [ -e /dev/sda1 ]; then
 	mount /dev/sda /c
+	rm /c/initramfs.gz
+	rm /c/kernel.gz
 	rsync -a /c/ /newc
 	umount /c
 	echo ',,83,*;' | sfdisk /dev/sda
@@ -90,7 +92,7 @@ fi
 
 
 cd /c
-aria2c -x 8 -s 8 --file-allocation=prealloc  "$URL" -o "/${version}.iso"
+aria2c -x 8 -s 8 --check-certificate=false --file-allocation=prealloc  "$URL" -o "/${version}.iso"
 sync
 
 echo "Checking iso"
