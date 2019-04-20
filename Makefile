@@ -15,7 +15,7 @@ d.vmdk:
 	rm d.img
 	#qemu-img create -f vmdk -o subformat=streamOptimized d.vmdk "${D_CAPACITY}"
 
-c/initramfs.gz: debian.cfg debian-root/init debian-root/installer
+c/initramfs.gz: debian.cfg debian-root/init debian-root/installer debian-root/etc/versions debian-root/au/*
 	rm -rf debian
 	fakeroot /usr/sbin/multistrap -f debian.cfg
 	mv debian/boot/vmlinu* c/kernel.gz
