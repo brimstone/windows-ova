@@ -1,5 +1,6 @@
 win2k19,Windows 2019 Standard,91e3a2f1acc39af21353c7cc105c799494d7539f,https://software-download.microsoft.com/download/sg/17763.253.190108-0006.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us.iso
 win2k16,Windows 2016 Standard,3bb1c60417e9aeb3f4ce0eb02189c0c84a1c6691,http://download.microsoft.com/download/1/6/F/16FA20E6-4662-482A-920B-1A45CF5AAE3C/14393.0.160715-1616.RS1_RELEASE_SERVER_EVAL_X64FRE_EN-US.ISO
+win10-64-1903,Windows 10 64-bit version 1903,743fc483bb8bf1901c0534a0ae15208a5a72a3c5,https://software-download.microsoft.com/download/pr/18362.30.190401-1528.19h1_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso
 win10-64-1809,Windows 10 64-bit version 1809,369e645a197bc2ca8309cb80467a85a16eacd1a7,https://software-download.microsoft.com/download/pr/17763.107.101029-1455.rs5_release_svc_refresh_CLIENT_LTSC_EVAL_x64FRE_en-us.iso
 win10-32-1809,Windows 10 32-bit version 1809,ba8e0184c61d88b92fb88046339f8ddc58a3b372,https://software-download.microsoft.com/download/pr/17763.107.101029-1455.rs5_release_svc_refresh_CLIENT_LTSC_EVAL_x86FRE_en-us.iso
 win10-64-1804,Windows 10 64-bit version 1804,a4ea45ec1282e85fc84af49acf7a8d649c31ac5c,https://software-download.microsoft.com/download/pr/17134.1.180410-1804.rs4_release_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso
