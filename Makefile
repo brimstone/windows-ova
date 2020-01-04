@@ -44,17 +44,23 @@ kvm: c/initramfs.gz c.vmdk d.vmdk
 	kvm -kernel c/kernel.gz -initrd c/initramfs.gz /dev/null -m 1024 \
 	-serial stdio
 
+.PHONY: clean
 clean:
 	-rm c.vmdk
 	-rm d.vmdk
 	-rm c/initramfs.gz
-	-rm example.iso
 	-rm -rf debian
+	-rm -rf ova
+
+.PHONY: dist-clean
+dist-clean: clean
+	-rm example.iso
 	-rm Windows*.ova
 
 .PHONY: ova
 ova: Windows-${VERSION}.ova
 Windows-${VERSION}.ova: c.vmdk d.vmdk Windows.ovf
+	mkdir -p ova
 	cp c.vmdk ova/Windows-c.vmdk
 	cp d.vmdk ova/Windows-d.vmdk
 	cp Windows.ovf ova/Windows-${VERSION}.ovf
@@ -72,6 +78,7 @@ Windows-${VERSION}.ova: c.vmdk d.vmdk Windows.ovf
 		Windows-c.vmdk \
 		Windows-d.vmdk
 		#Windows.mf
+	rm -rf ova
 
 example.iso:
 	genisoimage -o $@ -J -R -V example iso/
