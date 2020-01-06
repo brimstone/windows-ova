@@ -1,1 +1,1 @@
-powershell -ExecutionPolicy ByPass -File e:\install.ps1
+powershell -ExecutionPolicy ByPass -File d:\install.ps1
