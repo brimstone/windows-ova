@@ -13,6 +13,7 @@ dialog(){
 
 version=""
 localmirror=""
+poweroff=""
 
 # Since we've been booted with a valid cdrom we should copy it to d, then
 # shutdown
@@ -21,12 +22,19 @@ if mount /dev/sr0 /iso; then
 	mkfs.ntfs -f -L data /dev/sdb1
 	mount /dev/sdb1 /d
 	rsync -Pa /iso/ /d/
+	if [ -e /d/variables.txt ]; then
+		. /d/variables.txt
+	fi
 	umount /d
 	umount /iso
-	echo "We're done! The iso can be removed and this OVA can be exported."
-	echo "Press any key to continue"
-	read _
-	poweroff -f
+	if [ -n "$poweroff" ]; then
+		poweroff -f
+	else
+		echo "We're done! The iso can be removed and this OVA can be exported."
+		echo "Press any key to continue"
+		read _
+		poweroff -f
+	fi
 fi
 
 if ! mount /dev/sdb1 /d; then
