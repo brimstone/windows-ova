@@ -1,5 +1,5 @@
 default 1
-timeout 0
+timeout 30
 color cyan/blue white/blue
 
 title Installer

@@ -1,17 +1,27 @@
-Self-Installing Windows OVA
-===========================
+Self-Installing Windows OVA & ISO
+=================================
 _because I can't distribute Windows_
 
 Overview
 --------
 
-This is an Virtual Machine in OVA format that will install Windows ontop of
+### OVA
+
+This is an Virtual Machine in OVA format that will install Windows on top of
 itself. I wrote this as an alternative to [packer](https://www.packer.io). This
 OVA basically downloads the evaluation version of the Windows version you select
 to one drive as installation media and then installs onto the primary drive.
 After this is done, the smaller secondary drive can be discarded to save disk
 space. If the default size of the primary drive is not large enough, it should
 be resized BEFORE booting the OVA for the first time.
+
+### ISO
+
+This is an ISO to be used with packer to fully automate a Windows install in a
+VM environment like proxmox. This should be used as the secondary boot source,
+behind the primary drive. VMs that use this ISO should also have two drives, two
+cpus, and two gigabytes of memory. There's some packer templates provided in the
+release for the ISO.
 
 ![windows 10](win10.gif)
 

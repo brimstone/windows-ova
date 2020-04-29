@@ -1,0 +1,70 @@
+{
+  "variables": {
+    "iso_base": "https://github.com/brimstone/windows-ova/releases/download/$ISO_VERSION",
+    "packer_ip": "{{ .HTTPIP }}",
+    "proxmox_node": "{{ env `PROXMOX_NODE` }}",
+	"proxmox_url": "{{ env `PROXMOX_URL` }}",
+	"proxmox_username": "{{ env `PROXMOX_USERNAME` }}",
+	"proxmox_password": "{{ env `PROXMOX_PASSWORD` }}"
+  },
+  "builders": [
+    {
+      "type": "proxmox",
+	  "proxmox_url": "{{ user `proxmox_url` }}",
+	  "username": "{{ user `proxmox_username` }}",
+	  "password": "{{ user `proxmox_password` }}",
+      "cpu_type": "host",
+      "insecure_skip_tls_verify": "true",
+      "os": "$OS",
+      "cores": 2,
+      "memory": "2048",
+      "node": "{{ user `proxmox_node` }}",
+      "network_adapters": [
+        {
+          "bridge": "vmbr0"
+        }
+      ],
+      "disks": [
+        {
+          "type": "sata",
+          "disk_size": "30G",
+          "storage_pool": "local",
+          "storage_pool_type": "directory",
+          "format": "qcow2"
+        },
+        {
+          "type": "sata",
+          "disk_size": "10G",
+          "storage_pool": "local",
+          "storage_pool_type": "directory",
+          "format": "qcow2"
+        }
+      ],
+      "iso_url": "{{ user `iso_base` }}/Windows-$ISO_VERSION.iso",
+      "iso_checksum": "$SHA256SUM",
+      "iso_storage_pool": "local",
+      "boot_wait": "10s",
+      "boot_command": [
+        "<wait10>c",
+        "<wait>kernel /kernel.gz quiet",
+        " version=$VERSION",
+        " localmirror=none",
+        " url=http://{{ user `packer_ip` }}:{{ .HTTPPort }}/",
+        " <enter>",
+        "<wait>initrd /initramfs.gz<enter>",
+        "<wait>boot<enter>"
+      ],
+      "http_directory": "config",
+      "communicator": "winrm",
+      "winrm_username": "vagrant",
+      "winrm_password": "vagrant",
+      "winrm_timeout": "2h",
+      "winrm_use_ntlm": true,
+      "winrm_use_ssl": false,
+      "winrm_insecure": true,
+      "unmount_iso": true,
+      "template_name": "$VERSION",
+      "template_description": "$NAME, generated on {{ isotime \"2006-01-02T15:04:05Z\" }}"
+    }
+  ]
+}
