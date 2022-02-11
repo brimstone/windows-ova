@@ -1,2 +1,0 @@
-version=win10-64
-localmirror=none
